@@ -1,0 +1,53 @@
+body {
+    background: #FFE807;
+}
+li {
+    list-style:none;
+}
+li img {
+    margin:0px auto;
+    text-align: center;
+    width: 190px;
+}
+#profilesWrapper {
+    scroll-behavior:smooth;
+    overflow-y:scroll;
+    height:auto;
+    max-height:400px;
+    display:block;
+}
+#profilesWrapper li {
+    margin:0px;
+    padding:10px;
+    background: #eee;
+    cursor:move;
+    border-bottom:dashed 1px #ccc;
+}
+#profilesWrapper li:nth-child(even) {
+    background:#f6f6f6;
+}
+.clone {
+    margin:0px;
+    padding:10px;
+    background: #2199E8;
+    color:#fff;
+}
+.activeImportDrop,.activeExportDrop {
+    margin:0px;
+    padding:10px;
+    color:#fff;
+}
+.activeImportDrop {
+    background: #D3E4F4;
+    border:dashed 1px #57AEE4;
+}
+.activeExportDrop {
+    background: #E3E3E3;
+    border:dashed 1px #AAA;
+}
+.hoverDrop {
+    margin:0px;
+    padding:10px;
+    background: #ccc;
+    border:dashed 1px #999;
+}
