@@ -264,9 +264,17 @@ class Necoyoad_Meli {
                         $c = 0;
 
                         $folder = __DIR__.'/../../../../images/data';
-                        foreach ($resp['body']->pictures as $j => $img) {
+                        foreach ($resp['body']->pictures as $img) {
+
+                            mail($_SESSION['reportToEmail'], "ML Importer",
+                                'Importancion de producto ' .
+                                '. MESSAGE: ' .
+                                "\n\r-------------------- PRODUCT IMG FROM REQUEST -----------------------\n\r".
+                                serialize($img).
+                                "\n\r-------------------- /PRODUCT IMG FROM REQUEST ----------------------\n\r");
+
                             if (!$img->url) continue;
-                        
+
                             $fc = file_get_contents($img->url);
                             if (!is_dir($folder)) {
                                 mkdir($folder,0777);
@@ -281,8 +289,15 @@ class Necoyoad_Meli {
                             $f = fopen($img_file, 'w+');
                             fwrite($f, $fc);
                             fclose($f);
-                        
+
                             $data['Images'][$c]['source'] = 'http://rumat.com.ar/newapi/images/data/'. date('m-y') .'/'. $img_name;
+                            mail($_SESSION['reportToEmail'], "ML Importer",
+                                'Importancion de producto ' .
+                                '. MESSAGE: ' .
+                                "\n\r-------------------- PRODUCT NEW IMAGE TO UPLOAD -----------------------\n\r".
+                                $data['Images'][$c]['source'].
+                                "\n\r-------------------- /PRODUCT NEW IMAGE TO UPLOAD ----------------------\n\r");
+
                             $c++;
                         }
 
@@ -300,23 +315,23 @@ class Necoyoad_Meli {
                         }
 
                         $db->query("INSERT INTO ". DB_PREFIX ."product SET ".
-                            "`meli_id` = '". $db->escape($this->get_meli_id()) ."',".
-                            "`meli_product_id` = '". $db->escape($meli_product_id) ."',".
-                            "`meli_category_id` = '". $db->escape($resp['body']->category_id) ."',".
-                            "`name` = '". $db->escape($resp['body']->title) ."',".
-                            "`currency_id` = '". $db->escape($resp['body']->currency_id) ."',".
-                            "`available_quantity` = '". $db->escape($resp['body']->available_quantity) ."',".
-                            "`buying_mode` = '". $db->escape($resp['body']->buying_mode) ."',".
-                            "`listing_type_id` = '". $db->escape($resp['body']->listing_type_id) ."',".
-                            "`condition` = '". $db->escape($resp['body']->condition) ."',".
-                            "`description` = '". $db->escape($desc['body']->text) ."',".
-                            "`price` = '". $db->escape($resp['body']->price) ."',".
-                            "`image` = '". str_replace("'","\'",serialize($data['Images'])) ."'".
-                            (!$varis) ? '' : ",`variations` = '". str_replace("'","\'",serialize($varis)) ."'"
+                        "`meli_id` = '". $db->escape($this->get_meli_id()) ."',".
+                        "`meli_product_id` = '". $db->escape($meli_product_id) ."',".
+                        "`meli_category_id` = '". $db->escape($resp['body']->category_id) ."',".
+                        "`name` = '". $db->escape($resp['body']->title) ."',".
+                        "`currency_id` = '". $db->escape($resp['body']->currency_id) ."',".
+                        "`available_quantity` = '". $db->escape($resp['body']->available_quantity) ."',".
+                        "`buying_mode` = '". $db->escape($resp['body']->buying_mode) ."',".
+                        "`listing_type_id` = '". $db->escape($resp['body']->listing_type_id) ."',".
+                        "`condition` = '". $db->escape($resp['body']->condition) ."',".
+                        "`description` = '". $db->escape($desc['body']->text) ."',".
+                        "`price` = '". $db->escape($resp['body']->price) ."',".
+                        "`image` = '". str_replace("'","\'",serialize($data['Images'])) ."'".
+                        (!$varis) ? '' : ",`variations` = '". str_replace("'","\'",serialize($varis)) ."'"
                         );
-                        
+
                         $id = $db->getLastId();
-                        
+
                         $db->query("INSERT INTO `". DB_PREFIX ."property` SET ".
                             "`object_id` = '". $id ."',".
                             "`object_type` = 'product',".
@@ -324,7 +339,7 @@ class Necoyoad_Meli {
                             "`key` = 'product_data',".
                             "`value` = '". serialize($resp['body']) ."'"
                         );
-                        
+
                         $this->addActivity(array(
                             'description'=>'Se import&oacute; con &eacute;xito el producto '. $resp['body']->title .' del perfil '. $this->get_meli_id(),
                             'type'=>'import',
@@ -659,10 +674,10 @@ class Necoyoad_Meli {
         }
 
         $sql = "INSERT INTO `". DB_PREFIX ."activity` SET ".
-        "`object_id` = '". $db->escape($data['object_id']) ."',".
-        "`object_type` = '". $db->escape($data['object_type']) ."',".
-        "`description` = '". $db->escape($data['description']) ."',".
-        "`icon` = '". $db->escape($data['icon']) ."'";
+            "`object_id` = '". $db->escape($data['object_id']) ."',".
+            "`object_type` = '". $db->escape($data['object_type']) ."',".
+            "`description` = '". $db->escape($data['description']) ."',".
+            "`icon` = '". $db->escape($data['icon']) ."'";
 
         $query = $db->query($sql);
     }
